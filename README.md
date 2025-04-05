@@ -1,12 +1,8 @@
 # MaTTS - Text to Speech
 
 <p align="center">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="200" height="200">
-    <rect width="512" height="512" fill="#2395ff" rx="15%" ry="15%"/>
-    <path fill="white" d="M156.67 128h204.67v51.2h-76.8v204.8h-51.2V179.2h-76.8V128z"/>
-  </svg>
+  <img src="assets/logo.png" alt="MaTTS Logo" width="200">
 </p>
-
 
 ## Overview
 
