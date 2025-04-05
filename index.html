@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Text to Speech | Premium Voice Converter</title>
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgZmlsbD0iIzIzOTVmZiIgcng9IjE1JSIgcnk9IjE1JSIvPjxwYXRoIGZpbGw9IndoaXRlIiBkPSJNMTU2LjY3IDEyOGgyMDQuNjd2NTEuMmgtNzYuOHYyMDQuOGgtNTEuMlYxNzkuMmgtNzYuOFYxMjh6Ii8+PC9zdmc+" type="image/svg+xml">
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --apple-gray: #f5f5f7;
+            --apple-dark-gray: #86868b;
+            --apple-black: #1d1d1f;
+            --apple-blue: #0071e3;
+            --apple-blue-hover: #0077ed;
+            --apple-card-bg: rgba(255, 255, 255, 0.8);
+            --apple-red: #ff3b30;
+            --apple-green: #34c759;
+            --apple-yellow: #ffcc00;
+            --apple-cyan: #5ac8fa;
+            --apple-purple: #9874ff;
+            --apple-purple-hover: #a185ff;
+            
+            /* Theme colors */
+            --background-color: var(--apple-gray);
+            --text-color: var(--apple-black);
+            --card-bg: var(--apple-card-bg);
+            --header-bg: rgba(255, 255, 255, 0.8);
+            --border-color: rgba(0, 0, 0, 0.1);
+            --input-bg: rgba(255, 255, 255, 0.8);
+            --primary-color: var(--apple-blue);
+            --primary-hover: var(--apple-blue-hover);
+            --footer-text: var(--apple-dark-gray);
+            --slider-bg: var(--apple-dark-gray);
+        }
+        
+        html.dark {
+            --background-color: #121212;
+            --text-color: #f5f5f7;
+            --card-bg: rgba(30, 30, 30, 0.8);
+            --header-bg: rgba(18, 18, 18, 0.8);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --input-bg: rgba(45, 45, 45, 0.8);
+            --primary-color: var(--apple-purple);
+            --primary-hover: var(--apple-purple-hover);
+            --footer-text: #b0b0b5;
+            --slider-bg: #686868;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.5;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        .container {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 44px;
+            background-color: var(--header-bg);
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 0 16px;
+            border-bottom: 1px solid var(--border-color);
+            transition: background-color 0.3s ease;
+        }
+        
+        .header-title {
+            font-size: 20px;
+            font-weight: 500;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .github-link, .theme-switch {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+        
+        .github-link:hover, .theme-switch:hover {
+            background-color: rgba(128, 128, 128, 0.1);
+            transform: scale(1.05);
+        }
+        
+        .main-content {
+            padding: 40px 0;
+        }
+        
+        h1 {
+            font-size: 48px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            letter-spacing: -0.015em;
+        }
+        
+        h2 {
+            font-size: 24px;
+            font-weight: 400;
+            color: var(--apple-dark-gray);
+            margin-bottom: 40px;
+            letter-spacing: -0.01em;
+        }
+        
+        .tts-card {
+            background-color: var(--card-bg);
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+            border-radius: 18px;
+            padding: 24px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .form-group {
+            margin-bottom: 24px;
+        }
+        
+        textarea.form-control {
+            width: 100%;
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            font-size: 16px;
+            resize: none;
+            transition: border-color 0.2s ease, background-color 0.3s ease, color 0.3s ease;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+        }
+        
+        textarea.form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.15);
+        }
+        
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .slider-label {
+            font-size: 16px;
+            font-weight: 500;
+            min-width: 60px;
+        }
+        
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 4px;
+            border-radius: 2px;
+            background: var(--slider-bg);
+            outline: none;
+            transition: background-color 0.3s ease;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            cursor: pointer;
+            border: 2px solid var(--input-bg);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease;
+        }
+        
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            cursor: pointer;
+            border: 2px solid var(--input-bg);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease;
+        }
+        
+        .button-group {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .btn {
+            padding: 12px 0;
+            border-radius: 10px;
+            border: none;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .btn svg {
+            margin-right: 8px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+        
+        .btn-danger {
+            background-color: var(--apple-red);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #ff4d43;
+        }
+        
+        .btn-warning {
+            background-color: var(--apple-yellow);
+            color: var(--apple-black);
+        }
+        
+        .btn-warning:hover {
+            background-color: #ffd426;
+        }
+        
+        .btn-info {
+            background-color: var(--apple-cyan);
+            color: white;
+        }
+        
+        .btn-info:hover {
+            background-color: #6bd2ff;
+        }
+        
+        select.form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            font-size: 16px;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            transition: border-color 0.2s ease, background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        select.form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.15);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            color: var(--footer-text);
+            font-size: 14px;
+            border-top: 1px solid var(--border-color);
+            margin-top: 40px;
+            transition: color 0.3s ease;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 32px;
+            }
+            
+            h2 {
+                font-size: 18px;
+                margin-bottom: 24px;
+            }
+            
+            .button-group {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .main-content {
+                padding: 20px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-title">MaTTS</div>
+        <div class="header-actions">
+            <a href="https://github.com/IIIIQIIII/MaTTS" class="github-link" target="_blank" aria-label="View source code on GitHub">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                </svg>
+            </a>
+            <button class="theme-switch" id="themeToggle" aria-label="Toggle dark mode">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="themeIcon">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+            </button>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="main-content">
+            <h1>Text to Speech</h1>
+            <h2>Convert your text into a natural-sounding voice</h2>
+            
+            <div class="tts-card">
+                <form name="ttsform" autocomplete="off">
+                    <div class="form-group">
+                        <textarea rows="6" class="form-control" id="area" placeholder="Enter your text here..." autofocus=""></textarea>
+                    </div>
+                    
+                    <div class="slider-container">
+                        <div class="slider-label">Speed</div>
+                        <input type="range" min="0.1" step="0.1" max="3" value="1" class="slider" id="slider">
+                    </div>
+                    
+                    <div class="button-group">
+                        <button type="button" class="btn btn-primary" id="play" onclick="SpeechForm.playbtn()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                            </svg>
+                            Play
+                        </button>
+                        <button type="button" class="btn btn-danger" onclick="SpeechForm.stopbtn()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            </svg>
+                            Stop
+                        </button>
+                        <button type="button" class="btn btn-warning" onclick="SpeechForm.copy()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                            Copy
+                        </button>
+                        <button type="button" class="btn btn-info" onclick="SpeechForm.resetform()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 2v6h6"></path>
+                                <path d="M21 12A9 9 0 0 0 6 5.3L3 8"></path>
+                                <path d="M21 22v-6h-6"></path>
+                                <path d="M3 12a9 9 0 0 0 15 6.7l3-2.7"></path>
+                            </svg>
+                            Reset
+                        </button>
+                    </div>
+                    
+                    <div class="form-group">
+                        <select id="voiceselect" class="form-control" onchange="SpeechForm.voicechange()"></select>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <p>Text to Speech | Maded by Shijian</p>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        "use strict";
+        var area,txt;
+        var fontsize=18;
+        var s = { INIT:1, PLAY:2, PAUSED:3, END:4 };
+        var iplay, previplay, playstate=s.INIT;
+        var start,end;
+        var msg=null;
+        var imsg;
+        var voices=[];
+        var voiceindex=3;
+        var volume;
+        $( document ).ready(function() {
+            try { eval('"use strict"; class foo {}'); } catch (e) { alert("Speech synthesis is not supported in this browser!\nPlease use Safari or Chrome browser."); }
+            initTheme();
+            SpeechSynth.init();
+            SpeechForm.init();
+            setupThemeToggle();
+        });
+
+        // Theme handling
+        function initTheme() {
+            // Check for saved theme preference or use system preference
+            const savedTheme = localStorage.getItem('theme');
+            
+            if (savedTheme === 'dark') {
+                document.documentElement.classList.add('dark');
+                updateThemeIcon(true);
+            } else if (savedTheme === 'light') {
+                document.documentElement.classList.remove('dark');
+                updateThemeIcon(false);
+            } else {
+                // If no saved preference, use system preference
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    document.documentElement.classList.add('dark');
+                    updateThemeIcon(true);
+                }
+            }
+        }
+        
+        function setupThemeToggle() {
+            const themeToggle = document.getElementById('themeToggle');
+            
+            themeToggle.addEventListener('click', () => {
+                const isDarkMode = document.documentElement.classList.toggle('dark');
+                localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+                updateThemeIcon(isDarkMode);
+            });
+            
+            // Listen for system theme changes
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                if (!localStorage.getItem('theme')) { // Only apply if user hasn't set a preference
+                    if (e.matches) {
+                        document.documentElement.classList.add('dark');
+                        updateThemeIcon(true);
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                        updateThemeIcon(false);
+                    }
+                }
+            });
+        }
+        
+        function updateThemeIcon(isDarkMode) {
+            const themeIcon = document.getElementById('themeIcon');
+            
+            if (isDarkMode) {
+                // Change to moon icon for dark mode
+                themeIcon.innerHTML = `
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                `;
+            } else {
+                // Change to sun icon for light mode
+                themeIcon.innerHTML = `
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                `;
+            }
+        }
+
+        class SpeechForm {
+            static init() {
+                playstate = s.INIT;
+                $("#back").prop("disabled",false);
+                $("#play").prop("disabled",false);
+                $("#forw").prop("disabled",false);
+                txt=$("#area").val();
+                txt=txt.replace(/\t/g,"");
+                $("#area").val(txt);
+                SpeechForm.populateVoiceList();
+            }
+
+            static populateVoiceList() {
+    var allVoices = SpeechSynth.getvoices();
+    console.log("All available voices:", allVoices);
+    
+    if (allVoices == null || allVoices.length === 0) {
+        console.log("No voices available");
+        return;
+    }
+    
+    // Clear existing options
+    $("#voiceselect").empty();
+    
+    // Filter for English US Natural voices only
+    var usNaturalVoiceIndices = [];
+    console.log("Filtering for US English Natural voices:");
+    
+    for (var i = 0; i < allVoices.length; i++) {
+        // Check if the voice is English US AND contains "Natural"
+        if (allVoices[i].lang === 'en-US' && allVoices[i].name.includes("Natural")) {
+            usNaturalVoiceIndices.push(i); // Store original index
+            
+            var voice = allVoices[i];
+            console.log(`Voice ${i}: name=${voice.name}, lang=${voice.lang}, default=${voice.default}, localService=${voice.localService}`);
+            
+            var textContent = voice.name + ' (' + voice.lang + ')';
+            if (textContent.substring(0, 6) == "Google")
+                textContent = textContent.substring(7, textContent.length);
+            if (textContent.substring(0, 9) == "Microsoft")
+                textContent = textContent.substring(10, textContent.length);
+            
+            // Store the original index as a data attribute
+            $("#voiceselect").append("<option data-voice-index='" + i + "'>" + textContent + "</option>");
+        }
+    }
+    
+    console.log("Total US English Natural voices found:", usNaturalVoiceIndices.length);
+    console.log("US English Natural voice indices:", usNaturalVoiceIndices);
+    
+    // Select the first voice by default if any US English Natural voices found
+    if (usNaturalVoiceIndices.length > 0) {
+        $("#voiceselect option:first").prop("selected", true);
+        SpeechSynth.setvoice(usNaturalVoiceIndices[0]);
+        console.log("Default US Natural voice set to index:", usNaturalVoiceIndices[0]);
+    } else {
+        console.log("No US English Natural voices found, falling back to all Natural English voices");
+        // Fall back to all Natural English voices if no US Natural voices found
+        populateNaturalEnglishVoices();
+    }
+}
+
+    // Fallback function for all Natural English voices
+    static populateNaturalEnglishVoices() {
+        var allVoices = SpeechSynth.getvoices();
+        var naturalEnglishVoiceIndices = [];
+        
+        for (var i = 0; i < allVoices.length; i++) {
+            if (allVoices[i].lang.substring(0, 2) === 'en' && allVoices[i].name.includes("Natural")) {
+                naturalEnglishVoiceIndices.push(i);
+                
+                var voice = allVoices[i];
+                var textContent = voice.name + ' (' + voice.lang + ')';
+                if (textContent.substring(0, 6) == "Google")
+                    textContent = textContent.substring(7, textContent.length);
+                if (textContent.substring(0, 9) == "Microsoft")
+                    textContent = textContent.substring(10, textContent.length);
+                
+                $("#voiceselect").append("<option data-voice-index='" + i + "'>" + textContent + "</option>");
+            }
+        }
+        
+        if (naturalEnglishVoiceIndices.length > 0) {
+            $("#voiceselect option:first").prop("selected", true);
+            SpeechSynth.setvoice(naturalEnglishVoiceIndices[0]);
+            console.log("Fallback to any Natural English voice, index:", naturalEnglishVoiceIndices[0]);
+        } else {
+            console.log("No Natural English voices found, falling back to regular English voices");
+            populateEnglishVoices();
+        }
+    }
+
+    // Second fallback function for all English voices
+    static populateEnglishVoices() {
+        var allVoices = SpeechSynth.getvoices();
+        var englishVoiceIndices = [];
+        
+        for (var i = 0; i < allVoices.length; i++) {
+            if (allVoices[i].lang.substring(0, 2) === 'en') {
+                englishVoiceIndices.push(i);
+                
+                var voice = allVoices[i];
+                var textContent = voice.name + ' (' + voice.lang + ')';
+                if (textContent.substring(0, 6) == "Google")
+                    textContent = textContent.substring(7, textContent.length);
+                if (textContent.substring(0, 9) == "Microsoft")
+                    textContent = textContent.substring(10, textContent.length);
+                
+                $("#voiceselect").append("<option data-voice-index='" + i + "'>" + textContent + "</option>");
+            }
+        }
+        
+        if (englishVoiceIndices.length > 0) {
+            $("#voiceselect option:first").prop("selected", true);
+            SpeechSynth.setvoice(englishVoiceIndices[0]);
+            console.log("Fallback to any English voice, index:", englishVoiceIndices[0]);
+        }
+    }
+        
+            static copy()
+            {
+                $("#area").select();
+                document.execCommand('copy');
+            }
+            
+            static voicechange() {
+                var selectedOption = $("#voiceselect option:selected");
+                var voiceIndex = parseInt(selectedOption.attr('data-voice-index'));
+                SpeechSynth.setvoice(voiceIndex);
+            }
+            static volumebtn() {}
+            static volchange() {
+                var v = $("#volumerange").val();
+                SpeechSynth.setvolume(v);
+            }
+            static resetform() {
+                SpeechSynth.stop();
+                playstate=s.END;
+                $("#area").val("");
+                $("#area").focus();
+            }
+            static stopbtn() {
+                SpeechSynth.stop();
+                if( playstate==s.INIT ) {
+                    playstate=s.END;
+                    SpeechForm.playmng();
+                }
+                else
+                    playstate=s.END;
+            }
+            static setselect() {
+                $("#area")[0].selectionStart = start;
+                $("#area")[0].selectionEnd = end;
+                $("#area").focus();
+            }
+            static playbtn() {
+                if( playstate==s.END ) playstate = s.INIT;
+
+                if( playstate==s.INIT ) {
+                    $("#play").html(`
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="6" y="4" width="4" height="16"></rect>
+                            <rect x="14" y="4" width="4" height="16"></rect>
+                        </svg>
+                        Pause
+                    `);
+                    SpeechForm.playmng();
+                }
+                else if( playstate==s.PLAY ) {
+                    $("#play").html(`
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        </svg>
+                        Play
+                    `);
+                    playstate=s.PAUSED;
+                    SpeechSynth.stop();
+                    SpeechForm.setselect();
+                }
+                else if( playstate==s.PAUSED ) {
+                    $("#play").html(`
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="6" y="4" width="4" height="16"></rect>
+                            <rect x="14" y="4" width="4" height="16"></rect>
+                        </svg>
+                        Pause
+                    `);
+                    playstate = s.PLAY;
+                    iplay--;
+                    SpeechForm.playmng();
+                    SpeechForm.setselect();
+                }
+            }
+            static playmng() {
+                switch( playstate ) {
+                    case s.INIT:
+                        SpeechSynth.stop();
+                        area = $("#area").val();
+                        if( area=="" ) {
+                            $("#play").html(`
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                </svg>
+                                Play
+                            `);
+                            return;
+                        }
+                        txt=area.replace(/([.?!:,\r\n])\s*/g, "$1|").split("|");
+                        if( txt==null || txt.length==0 ) {
+                            $("#play").html(`
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                </svg>
+                                Play
+                            `);
+                            return;
+                        }
+                        iplay = start = end = 0;
+                        previplay = -1;
+                        playstate = s.PLAY;
+                    case s.PLAY:
+                        var t=txt[iplay].replace(/[\"\'\'\']/gi, "");
+                        SpeechSynth.play(t);
+                        if( previplay != iplay ) {
+                            previplay = iplay;
+                            start = area.indexOf(txt[iplay],end);
+                            end = start+txt[iplay].length;
+                        }
+                        SpeechForm.setselect();
+                        if( ++iplay==txt.length )
+                            playstate = s.END;
+                        break;
+                    case s.PAUSED:
+                        break;
+                    case s.END:
+                        $("#play").html(`
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                            </svg>
+                            Play
+                        `);
+                        $("#area").blur();
+                        playstate = s.INIT;
+                        break;
+                    default:
+                        console.log("Bad playstate!!!");
+                }
+            }
+        }
+        class SpeechSynth {
+            static init() {
+                if( !('speechSynthesis' in window) ) {
+                    alert("Speech synthesis is not supported in this browser!\nPlease use Safari or Chrome browser.");
+                    return;
+                }
+                SpeechSynth.stop();
+                voices = window.speechSynthesis.getVoices();
+                volume=1.0;
+                if (speechSynthesis.onvoiceschanged !== undefined) {
+                    speechSynthesis.onvoiceschanged = function() {
+                        console.log("onvoiceschanged()");
+                        if( voices.length>0 ) return;
+                        voices = window.speechSynthesis.getVoices()
+                        SpeechForm.populateVoiceList();
+                    };
+                }
+            }
+            static getvoices() {
+                return voices;
+            }
+            static setvoice(i) {
+                voiceindex = i;
+            }
+            static setvolume(v) {
+                volume = v;
+            }
+            static ispending() {
+                return window.speechSynthesis.pending;
+            }
+            static stop() {
+                window.speechSynthesis.cancel();
+            }
+            static pause() {
+                window.speechSynthesis.pause();
+            }
+            static resume() {
+                window.speechSynthesis.resume();
+            }
+            static play(s) {
+                if( voices.length==0 ) alert("No voices detected. Please restart the browser and try again.");
+                msg = new SpeechSynthesisUtterance();
+                msg.onend = function(e) {
+                    SpeechForm.playmng();
+                };
+                msg.onerror = function(e) {
+                    console.log('Error in ' + e.elapsedTime + ' seconds.');
+                    SpeechForm.playmng();
+                };
+                var slider = $('#slider').val();
+                msg.voice = voices[voiceindex];
+                msg.volume = volume; // 0 to 1
+                msg.rate = slider; // 0.1 to 10
+                msg.pitch = 0; //0 to 2
+                msg.text = s;
+                msg.lang = voices[voiceindex].lang; 
+                window.speechSynthesis.speak(msg);
+                if( ++imsg==2 ) imsg=0;
+            }
+        }
+    </script>
+</body>
+</html>
